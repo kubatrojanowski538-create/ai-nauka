@@ -8,54 +8,54 @@ Drugi zestaw służy do niezależnego przećwiczenia tych samych zagadnień w in
 
 Po co wydziela się zbiór testowy?
 
-A. Do strojenia hiperparametrów w każdej epoce.  
-B. Do końcowej oceny modelu po zakończeniu wyboru modelu i hiperparametrów.  
-C. Do uczenia parametrów modelu.  
+A. Do strojenia hiperparametrów w każdej epoce.
+B. Do końcowej oceny modelu po zakończeniu wyboru modelu i hiperparametrów.
+C. Do uczenia parametrów modelu.
 D. Do zastąpienia funkcji kosztu.
 
 ### 2. Spadek gradientu
 
 Co robi metoda spadku gradientu?
 
-A. Aktualizuje parametry w kierunku przeciwnym do gradientu funkcji kosztu.  
-B. Losowo usuwa cechy ze zbioru testowego.  
-C. Zamienia klasyfikację w regresję.  
+A. Aktualizuje parametry w kierunku przeciwnym do gradientu funkcji kosztu.
+B. Losowo usuwa cechy ze zbioru testowego.
+C. Zamienia klasyfikację w regresję.
 D. Oblicza wyłącznie metrykę accuracy.
 
 ### 3. Dropout
 
 Jaki jest główny cel dropout?
 
-A. Przyspieszenie odczytu danych z dysku.  
-B. Losowe zerowanie części aktywacji podczas treningu w celu regularyzacji.  
-C. Zamiana logitów na prawdopodobieństwa.  
+A. Przyspieszenie odczytu danych z dysku.
+B. Losowe zerowanie części aktywacji podczas treningu w celu regularyzacji.
+C. Zamiana logitów na prawdopodobieństwa.
 D. Normalizacja etykiet klas.
 
 ### 4. Batch normalization
 
 Które zdanie najlepiej opisuje batch normalization?
 
-A. Normalizuje aktywacje w mini-batchu i może stabilizować uczenie.  
-B. Zawsze zastępuje funkcję kosztu.  
-C. Działa wyłącznie w modelach KNN.  
+A. Normalizuje aktywacje w mini-batchu i może stabilizować uczenie.
+B. Zawsze zastępuje funkcję kosztu.
+C. Działa wyłącznie w modelach KNN.
 D. Służy tylko do podziału danych na train/test.
 
 ### 5. Random search
 
 Na czym polega random search?
 
-A. Sprawdza wszystkie możliwe kombinacje hiperparametrów z siatki.  
-B. Losuje kombinacje hiperparametrów z zadanych zakresów lub rozkładów.  
-C. Uczy model bez danych treningowych.  
+A. Sprawdza wszystkie możliwe kombinacje hiperparametrów z siatki.
+B. Losuje kombinacje hiperparametrów z zadanych zakresów lub rozkładów.
+C. Uczy model bez danych treningowych.
 D. Zawsze wybiera najmniejszy model.
 
 ### 6. Klasyfikacja binarna w PyTorch
 
 Która funkcja kosztu jest zwykle odpowiednia, gdy model zwraca jeden logit dla klasyfikacji binarnej?
 
-A. `nn.CrossEntropyLoss()` z jedną klasą.  
-B. `nn.BCEWithLogitsLoss()`.  
-C. `nn.MSELoss()` zawsze i bez wyjątków.  
+A. `nn.CrossEntropyLoss()` z jedną klasą.
+B. `nn.BCEWithLogitsLoss()`.
+C. `nn.MSELoss()` zawsze i bez wyjątków.
 D. `nn.Softmax()`.
 
 ---
@@ -150,4 +150,3 @@ Dla każdego problemu wskaż po dwa sensowne modele płytkie i po dwa hiperparam
 1. klasyfikacja binarna klientów odchodzących z usługi,
 2. klasyfikacja wieloklasowa typów dokumentów,
 3. regresja ceny nieruchomości.
-

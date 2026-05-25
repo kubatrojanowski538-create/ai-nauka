@@ -617,4 +617,3 @@ Przy niezbalansowanych klasach nie opieraj się wyłącznie na accuracy.
 9. Wybierz model na podstawie walidacji.
 10. Oceń raz na zbiorze testowym.
 11. Zinterpretuj błędy i ograniczenia.
-

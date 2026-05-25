@@ -8,54 +8,54 @@ Zestaw jest przeznaczony do samodzielnego powtórzenia materiału. Nie zawiera o
 
 Które zdanie najlepiej opisuje k-krotną walidację krzyżową?
 
-A. Model jest uczony tylko raz na zbiorze testowym.  
-B. Dane są dzielone na `k` części, a każda część raz pełni rolę walidacyjną.  
-C. K-krotna walidacja zawsze usuwa overfitting.  
+A. Model jest uczony tylko raz na zbiorze testowym.
+B. Dane są dzielone na `k` części, a każda część raz pełni rolę walidacyjną.
+C. K-krotna walidacja zawsze usuwa overfitting.
 D. K-krotna walidacja służy tylko do augmentacji obrazów.
 
 ### 2. Regularyzacja L1
 
 Jaki efekt jest szczególnie charakterystyczny dla regularyzacji L1?
 
-A. Może wyzerować część wag modelu.  
-B. Zawsze zwiększa liczbę cech.  
-C. Działa wyłącznie w klasyfikacji wieloklasowej.  
+A. Może wyzerować część wag modelu.
+B. Zawsze zwiększa liczbę cech.
+C. Działa wyłącznie w klasyfikacji wieloklasowej.
 D. Jest tym samym co batch normalization.
 
 ### 3. KNN
 
 Dlaczego przy KNN zwykle warto skalować cechy?
 
-A. Bo KNN używa odległości między próbkami.  
-B. Bo KNN nie obsługuje danych liczbowych.  
-C. Bo skalowanie zastępuje walidację.  
+A. Bo KNN używa odległości między próbkami.
+B. Bo KNN nie obsługuje danych liczbowych.
+C. Bo skalowanie zastępuje walidację.
 D. Bo KNN wymaga funkcji softmax.
 
 ### 4. SVM
 
 Co zwykle oznacza większa wartość hiperparametru `C` w SVM?
 
-A. Silniejszą regularyzację i szerszy margines kosztem większej liczby błędów.  
-B. Mniejszą karę za błędy.  
-C. Większą karę za błędy i potencjalnie bardziej dopasowaną granicę.  
+A. Silniejszą regularyzację i szerszy margines kosztem większej liczby błędów.
+B. Mniejszą karę za błędy.
+C. Większą karę za błędy i potencjalnie bardziej dopasowaną granicę.
 D. Liczbę klas w problemie.
 
 ### 5. Niezbalansowane klasy
 
 Która metryka bywa myląca przy silnie niezbalansowanych klasach?
 
-A. Recall.  
-B. Precision.  
-C. Accuracy.  
+A. Recall.
+B. Precision.
+C. Accuracy.
 D. F1-score.
 
 ### 6. Funkcja kosztu
 
 Która funkcja kosztu jest typowym wyborem dla klasyfikacji wieloklasowej z jedną poprawną klasą?
 
-A. MSELoss.  
-B. Cross-entropy.  
-C. MAE.  
+A. MSELoss.
+B. Cross-entropy.
+C. MAE.
 D. Huber loss.
 
 ---
@@ -133,4 +133,3 @@ Porównaj bagging i boosting. Podaj po jednym przykładzie algorytmu dla każdej
 ### 14. Bias-variance trade-off
 
 Wyjaśnij kompromis bias-variance. Jak zmieniają się bias i variance, gdy zwiększamy złożoność modelu?
-

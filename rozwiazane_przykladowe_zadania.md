@@ -8,9 +8,9 @@ Zadania są wzorowane na zakresie z `Wskazowki.md`. Pokazują nie tylko odpowied
 
 **Pytanie:** Po co stosuje się k-krotną walidację krzyżową?
 
-A. Aby nauczyć model na zbiorze testowym.  
-B. Aby stabilniej oszacować jakość modelu i wykorzystać dane w kilku podziałach trening/walidacja.  
-C. Aby usunąć potrzebę zbioru treningowego.  
+A. Aby nauczyć model na zbiorze testowym.
+B. Aby stabilniej oszacować jakość modelu i wykorzystać dane w kilku podziałach trening/walidacja.
+C. Aby usunąć potrzebę zbioru treningowego.
 D. Aby zawsze zwiększyć liczbę cech.
 
 **Odpowiedź:** B.
@@ -23,9 +23,9 @@ D. Aby zawsze zwiększyć liczbę cech.
 
 **Pytanie:** Który objaw najczęściej wskazuje na overfitting?
 
-A. Wysoki błąd treningowy i wysoki błąd walidacyjny.  
-B. Niski błąd treningowy i wysoki błąd walidacyjny.  
-C. Identyczny wynik na treningu i walidacji.  
+A. Wysoki błąd treningowy i wysoki błąd walidacyjny.
+B. Niski błąd treningowy i wysoki błąd walidacyjny.
+C. Identyczny wynik na treningu i walidacji.
 D. Brak parametrów w modelu.
 
 **Odpowiedź:** B.
@@ -321,4 +321,3 @@ Bagging uczy wiele modeli niezależnie na losowych próbkach danych i uśrednia 
 Boosting uczy modele sekwencyjnie. Kolejne modele poprawiają błędy poprzednich. Przykładami są AdaBoost i Gradient Boosting. Może osiągać bardzo dobre wyniki, ale wymaga kontroli overfittingu.
 
 Stacking uczy kilka różnych modeli bazowych, a następnie metamodel, który łączy ich predykcje. Trzeba uważać, żeby metamodel był uczony na predykcjach walidacyjnych, nie na predykcjach z tych samych danych treningowych, bo grozi to wyciekiem danych.
-
