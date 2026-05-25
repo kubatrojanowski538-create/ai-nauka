@@ -2,7 +2,7 @@
 
 Ten plik uzupełnia materiały o bardziej formalne spojrzenie na funkcje kosztu i optymalizatory. Celem jest zrozumienie, co model minimalizuje, skąd biorą się gradienty i jak różne algorytmy aktualizują parametry.
 
-Uwaga praktyczna: Mermaid nie jest pełnym zamiennikiem LaTeX-a do zapisu matematyki. Dobrze sprawdza się jednak jako "ludzki" zapis kroków obliczeń: co wchodzi do wzoru, co jest liczone po drodze i co jest wynikiem. Dlatego poniżej wzory są pokazane głównie jako diagramy Mermaid, a przy trudniejszych miejscach zostaje krótki zapis tekstowy dla precyzji.
+Uwaga praktyczna: GitHub renderuje wzory LaTeX zapisane między `$$ ... $$`, więc właściwe równania są poniżej podane w LaTeX-u. Diagramy Mermaid zostają jako bardziej ludzka intuicja: pokazują, co wchodzi do wzoru, co jest liczone po drodze i co jest wynikiem.
 
 ---
 
@@ -20,7 +20,21 @@ Najczęściej spotykane oznaczenia:
 - `eta` / `\eta` - learning rate,
 - `grad J(\theta)` / `\nabla_\theta J(\theta)` - gradient funkcji kosztu względem parametrów.
 
-Ogólna postać uczenia modelu wygląda tak:
+Ogólna postać uczenia modelu w LaTeX-u:
+
+$$
+D = \{(x_i, y_i)\}_{i=1}^{N}
+$$
+
+$$
+\hat{y}_i = f_\theta(x_i)
+$$
+
+$$
+J(\theta) = \frac{1}{N} \sum_{i=1}^{N} L(y_i, f_\theta(x_i))
+$$
+
+Ten sam proces jako diagram:
 
 ```mermaid
 flowchart LR
@@ -30,12 +44,6 @@ flowchart LR
     D --> E["Cel uczenia<br/>znaleźć theta minimalizujące J(theta)"]
 ```
 
-Najkrótszy zapis tekstowy:
-
-```text
-J(theta) = (1 / N) * suma_i L(y_i, f_theta(x_i))
-```
-
 Uczenie modelu polega na znalezieniu takich parametrów `theta`, które minimalizują `J(theta)`.
 
 ---
@@ -43,6 +51,12 @@ Uczenie modelu polega na znalezieniu takich parametrów `theta`, które minimali
 ## 2. Gradient i intuicja optymalizacji
 
 Gradient wskazuje kierunek najszybszego wzrostu funkcji. Jeśli chcemy minimalizować funkcję kosztu, aktualizujemy parametry w kierunku przeciwnym do gradientu:
+
+$$
+\theta_{t+1} = \theta_t - \eta \nabla_\theta J(\theta_t)
+$$
+
+Diagram kroków:
 
 ```mermaid
 flowchart LR
@@ -67,7 +81,19 @@ Jeżeli `eta` jest zbyt duże, optymalizacja może przeskakiwać minimum albo si
 
 ### 3.1. Mean Squared Error - MSE
 
-Wzór w formie kroków:
+Wzór dla jednej próbki:
+
+$$
+L(y, \hat{y}) = (y - \hat{y})^2
+$$
+
+Wzór dla całego zbioru:
+
+$$
+J(\theta) = \frac{1}{N} \sum_{i=1}^{N} (y_i - \hat{y}_i)^2
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -77,11 +103,11 @@ flowchart LR
     D --> E["Dla całego zbioru<br/>MSE = średnia z e_i^2"]
 ```
 
-Pochodna po predykcji, w krótkim zapisie:
+Pochodna po predykcji:
 
-```text
-dL / d y_hat = 2 * (y_hat - y)
-```
+$$
+\frac{\partial L}{\partial \hat{y}} = 2(\hat{y} - y)
+$$
 
 Co to oznacza:
 
@@ -97,7 +123,13 @@ criterion = torch.nn.MSELoss()
 
 ### 3.2. Mean Absolute Error - MAE
 
-Wzór w formie kroków:
+Wzór LaTeX:
+
+$$
+J(\theta) = \frac{1}{N} \sum_{i=1}^{N} |y_i - \hat{y}_i|
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -122,6 +154,22 @@ criterion = torch.nn.L1Loss()
 ### 3.3. Huber loss
 
 Huber loss łączy MSE dla małych błędów i MAE dla dużych błędów.
+
+Dla błędu:
+
+$$
+a = y - \hat{y}
+$$
+
+wzór ma postać:
+
+$$
+L_\delta(a) =
+\begin{cases}
+\frac{1}{2}a^2, & \text{gdy } |a| \le \delta \\
+\delta(|a| - \frac{1}{2}\delta), & \text{gdy } |a| > \delta
+\end{cases}
+$$
 
 Działanie w formie decyzji:
 
@@ -154,6 +202,12 @@ criterion = torch.nn.HuberLoss(delta=1.0)
 
 W klasyfikacji binarnej model często zwraca logit `z`, czyli surowy wynik przed aktywacją. Sigmoid zamienia logit na prawdopodobieństwo:
 
+$$
+p = \sigma(z) = \frac{1}{1 + e^{-z}}
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart LR
     A["Logit z<br/>surowy wynik modelu"] --> B["Sigmoid<br/>p = 1 / (1 + exp(-z))"]
@@ -170,6 +224,12 @@ gdzie:
 
 Dla etykiety `y` należącej do `{0, 1}` i predykcji `p`:
 
+$$
+L(y, p) = -\left[y\log(p) + (1-y)\log(1-p)\right]
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart TD
     A["Etykieta y<br/>0 albo 1"] --> B{"Jaka jest prawdziwa klasa?"}
@@ -178,12 +238,6 @@ flowchart TD
     B -- "y = 0" --> E["Kara<br/>L = -log(1 - p)"]
     D --> F["BCE<br/>średnia kara po batchu"]
     E --> F
-```
-
-Pełny zapis tekstowy:
-
-```text
-L(y, p) = -[y * log(p) + (1 - y) * log(1 - p)]
 ```
 
 Przypadki:
@@ -240,6 +294,18 @@ criterion = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor([w]))
 
 Model dla `K` klas zwraca wektor logitów:
 
+$$
+z = [z_1, z_2, \ldots, z_K]
+$$
+
+Softmax zamienia logity na prawdopodobieństwa:
+
+$$
+p_k = \frac{e^{z_k}}{\sum_{j=1}^{K} e^{z_j}}
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart LR
     A["Logity modelu<br/>z = [z_1, z_2, ..., z_K]"] --> B["Exponenty<br/>exp(z_1), ..., exp(z_K)"]
@@ -258,6 +324,18 @@ Właściwości:
 
 Jeżeli prawdziwa klasa ma indeks `c`, strata wynosi:
 
+$$
+L = -\log(p_c)
+$$
+
+Dla etykiety one-hot `y`:
+
+$$
+L(y, p) = -\sum_{k=1}^{K} y_k \log(p_k)
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart LR
     A["Prawdziwa klasa<br/>c"] --> C["Wybierz prawdopodobieństwo<br/>p_c"]
@@ -267,12 +345,6 @@ flowchart LR
 ```
 
 czyli model jest karany za niskie prawdopodobieństwo przypisane poprawnej klasie.
-
-Dla etykiety one-hot `y`, precyzyjny zapis tekstowy:
-
-```text
-L(y, p) = - sum_{k=1}^{K} y_k * log(p_k)
-```
 
 Ponieważ tylko jedna wartość `y_k` jest równa 1, wzór redukuje się do `-log(p_c)`.
 
@@ -317,6 +389,12 @@ Większa waga klasy oznacza większą karę za błędy na tej klasie.
 
 Dla klasyfikacji binarnej w SVM często zapisuje się etykiety jako `y` należące do `{-1, 1}`. Dla wyniku modelu `f(x)` hinge loss ma postać:
 
+$$
+L(y, f(x)) = \max(0, 1 - y f(x))
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart TD
     A["Etykieta<br/>y w {-1, 1}"] --> C["Margines<br/>m = y * f(x)"]
@@ -334,6 +412,12 @@ Interpretacja:
 - jeśli `y * f(x) < 1`, próbka jest błędna albo zbyt blisko marginesu i pojawia się kara.
 
 W SVM minimalizuje się zwykle:
+
+$$
+J(w) = \frac{1}{2} \lVert w \rVert^2 + C \sum_i \max(0, 1 - y_i f(x_i))
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -354,6 +438,12 @@ gdzie:
 
 Regularyzacja zmienia funkcję minimalizowaną przez model:
 
+$$
+J_{total}(\theta) = J_{data}(\theta) + \lambda R(\theta)
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart LR
     A["Strata na danych<br/>J_data(theta)"] --> C["Całkowity koszt<br/>J_total(theta)"]
@@ -368,6 +458,10 @@ gdzie:
 - `lambda` kontroluje siłę regularyzacji.
 
 ### 7.1. L2
+
+$$
+R(\theta) = \sum_j \theta_j^2
+$$
 
 ```mermaid
 flowchart LR
@@ -385,6 +479,10 @@ Efekt:
 W optymalizatorach PyTorch parametr `weight_decay` zwykle odpowiada regularyzacji L2 albo jej wariantowi odsprzężonemu, zależnie od optymalizatora.
 
 ### 7.2. L1
+
+$$
+R(\theta) = \sum_j |\theta_j|
+$$
 
 ```mermaid
 flowchart LR
@@ -407,6 +505,12 @@ Efekt:
 
 Gradient liczony jest na całym zbiorze:
 
+$$
+\theta_{t+1} = \theta_t - \eta \frac{1}{N} \sum_{i=1}^{N} \nabla_\theta L_i(\theta_t)
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart LR
     A["Cały zbiór treningowy<br/>N próbek"] --> B["Policz gradient każdej próbki<br/>grad L_i"]
@@ -428,6 +532,12 @@ Wady:
 
 Gradient liczony jest dla jednej próbki:
 
+$$
+\theta_{t+1} = \theta_t - \eta \nabla_\theta L_i(\theta_t)
+$$
+
+Diagram intuicyjny:
+
 ```mermaid
 flowchart LR
     A["Jedna losowa próbka<br/>(x_i, y_i)"] --> B["Policz stratę<br/>L_i"]
@@ -448,6 +558,12 @@ Wady:
 ### 8.3. Mini-batch SGD
 
 Gradient liczony jest dla paczki `B` próbek:
+
+$$
+\theta_{t+1} = \theta_t - \eta \frac{1}{|B|} \sum_{i \in B} \nabla_\theta L_i(\theta_t)
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -471,7 +587,17 @@ Typowe hiperparametry:
 
 Momentum dodaje pamięć poprzednich aktualizacji. Zamiast poruszać się wyłącznie według aktualnego gradientu, model używa prędkości `v`.
 
-Wzór w formie kroków:
+Wzory LaTeX:
+
+$$
+v_t = \beta v_{t-1} + (1 - \beta) \nabla_\theta J(\theta_t)
+$$
+
+$$
+\theta_{t+1} = \theta_t - \eta v_t
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -502,7 +628,25 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
 Nesterov momentum liczy gradient po "spojrzeniu do przodu", czyli w miejscu, do którego prowadzi aktualna prędkość.
 
-Intuicyjny zapis jako diagram:
+Wzory LaTeX:
+
+$$
+\theta_{lookahead} = \theta_t - \eta \beta v_{t-1}
+$$
+
+$$
+g_t = \nabla_\theta J(\theta_{lookahead})
+$$
+
+$$
+v_t = \beta v_{t-1} + g_t
+$$
+
+$$
+\theta_{t+1} = \theta_t - \eta v_t
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -534,7 +678,21 @@ optimizer = torch.optim.SGD(
 
 Adagrad dostosowuje learning rate osobno dla każdego parametru. Parametry, które często dostają duże gradienty, mają efektywnie mniejszy krok.
 
-Wzory uproszczone jako diagram:
+Wzory LaTeX:
+
+$$
+g_t = \nabla_\theta J(\theta_t)
+$$
+
+$$
+r_t = r_{t-1} + g_t^2
+$$
+
+$$
+\theta_{t+1} = \theta_t - \eta \frac{g_t}{\sqrt{r_t} + \epsilon}
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -561,7 +719,21 @@ Wady:
 
 RMSProp rozwiązuje problem stale rosnącej sumy z Adagrad, używając wykładniczej średniej kwadratów gradientów.
 
-Wzory jako diagram:
+Wzory LaTeX:
+
+$$
+g_t = \nabla_\theta J(\theta_t)
+$$
+
+$$
+r_t = \beta r_{t-1} + (1 - \beta)g_t^2
+$$
+
+$$
+\theta_{t+1} = \theta_t - \eta \frac{g_t}{\sqrt{r_t} + \epsilon}
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -597,7 +769,33 @@ Adam łączy idee momentum i RMSProp. Utrzymuje:
 - średnią ruchomą gradientów,
 - średnią ruchomą kwadratów gradientów.
 
-Wzory jako diagram:
+Wzory LaTeX:
+
+$$
+g_t = \nabla_\theta J(\theta_t)
+$$
+
+$$
+m_t = \beta_1 m_{t-1} + (1 - \beta_1)g_t
+$$
+
+$$
+v_t = \beta_2 v_{t-1} + (1 - \beta_2)g_t^2
+$$
+
+$$
+\hat{m}_t = \frac{m_t}{1 - \beta_1^t}
+$$
+
+$$
+\hat{v}_t = \frac{v_t}{1 - \beta_2^t}
+$$
+
+$$
+\theta_{t+1} = \theta_t - \eta \frac{\hat{m}_t}{\sqrt{\hat{v}_t} + \epsilon}
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -638,6 +836,12 @@ optimizer = torch.optim.Adam(model.parameters(), lr=1e-3)
 AdamW to wariant Adama z odsprzężonym weight decay. W klasycznym Adamie regularyzacja L2 miesza się z adaptacyjnym skalowaniem gradientów, co może działać inaczej niż oczekiwane "zmniejszanie wag".
 
 AdamW wykonuje weight decay bardziej bezpośrednio:
+
+$$
+\theta \leftarrow \theta - \eta \cdot weight\_decay \cdot \theta
+$$
+
+Diagram intuicyjny:
 
 ```mermaid
 flowchart LR
@@ -700,17 +904,17 @@ Popularne harmonogramy:
 
 Co określoną liczbę epok learning rate jest mnożony przez stałą.
 
-```text
-lr <- gamma * lr
-```
+$$
+lr \leftarrow \gamma \cdot lr
+$$
 
 ### Exponential decay
 
 Learning rate maleje wykładniczo.
 
-```text
-lr_t = lr_0 * gamma^t
-```
+$$
+lr_t = lr_0 \cdot \gamma^t
+$$
 
 ### Cosine annealing
 
