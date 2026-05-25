@@ -1,0 +1,43 @@
+Wskazówki do zaliczenia laboratorium ze Sztucznej Inteligencji 2026 
+Czas: 60min 
+Liczba punktów: 50 
+1. 6 zadań zamkniętych jednokrotnego wyboru - 1pkt/zadanie, łącznie 6pkt. Obowiązujący 
+materiał: całość z laboratorium.  
+2. 2 zadania otwarte - 2pkt/zadanie, łącznie 4pkt. Zadania podobnego typu jak na 
+wejściówkach. Poza definicją mogą być dodatkowe pytania o parametr, dlaczego, gdzie 
+się używa itd.  
+Obowiązujące zagadnienia: 
+1. k-krotna walidacja krzyżowa 
+2. podział zbioru danych na podzbiory 
+3. metoda spadku gradientu (GD, SGD) 
+4. regularyzacja l1 i l2 
+5. overfitting 
+6. underfitting 
+7. KNN 
+8. SVM 
+9. niezbalansowanie klas 
+10. bagging 
+11. boosting 
+12. stacking 
+13. hiperparametry, a  parametry modelu 
+14. algorytmy poszukiwania hiperparametrów 
+15. bias-variance trade-off 
+16. early stopping 
+17. augmentacja danych 
+18. backpropagation 
+19. dropout 
+20. batch normalization 
+3. Zadanie otwarte - funkcja aktywacji - 2pkt.  
+Możliwe funkcje: ReLU, Sigmoid, Softmax, Tanh 
+4. Zaprojektować eksperyment z użyciem modeli płytkich - 18pkt.  
+Wymagana znajomość: 
+1. Odróżniania problemu klasyfikacji od regresji. 
+2. Funkcji kosztu, ich obliczania i dobierania do problemu, charakterystyki 
+danych. 
+3. Płytkich modeli uczenia maszynowego, ich najważniejszych hiperparametrów 
+(2-3) i ich zakresów.  
+5. Implementacja głębokiego modelu uczenia maszynowego z warstwami liniowymi w języku 
+python z użyciem biblioteki Pytorch  wraz z dobraniem optymalizatora (materiał z ostatniego 
+laboratorium) - 20pkt.  Sieć musi spełniać zadane wymogi jak np. liczba warstw, musi być 
+odpowiednia dla problemu -  regresja/klasyfikacja (binarna/wieloklasowa) oraz z 
+uwzględnieniem danych wejściowych (dane tabelaryczne/obraz).
