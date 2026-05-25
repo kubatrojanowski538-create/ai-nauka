@@ -2,6 +2,8 @@
 
 Ten plik uzupełnia materiały o bardziej formalne spojrzenie na funkcje kosztu i optymalizatory. Celem jest zrozumienie, co model minimalizuje, skąd biorą się gradienty i jak różne algorytmy aktualizują parametry.
 
+Uwaga praktyczna: Mermaid nie jest pełnym zamiennikiem LaTeX-a do zapisu matematyki. Dobrze sprawdza się jednak jako "ludzki" zapis kroków obliczeń: co wchodzi do wzoru, co jest liczone po drodze i co jest wynikiem. Dlatego poniżej wzory są pokazane głównie jako diagramy Mermaid, a przy trudniejszych miejscach zostaje krótki zapis tekstowy dla precyzji.
+
 ---
 
 ## 1. Notacja
@@ -18,22 +20,20 @@ Najczęściej spotykane oznaczenia:
 - `eta` / `\eta` - learning rate,
 - `grad J(\theta)` / `\nabla_\theta J(\theta)` - gradient funkcji kosztu względem parametrów.
 
-Dla zbioru treningowego:
+Ogólna postać uczenia modelu wygląda tak:
 
-```text
-D = {(x_1, y_1), (x_2, y_2), ..., (x_N, y_N)}
+```mermaid
+flowchart LR
+    A["Dane treningowe<br/>(x_i, y_i) dla i = 1..N"] --> B["Model<br/>y_hat_i = f_theta(x_i)"]
+    B --> C["Strata pojedynczej próbki<br/>L_i = L(y_i, y_hat_i)"]
+    C --> D["Średnia strata<br/>J(theta) = (1 / N) * suma L_i"]
+    D --> E["Cel uczenia<br/>znaleźć theta minimalizujące J(theta)"]
 ```
 
-model zwraca:
+Najkrótszy zapis tekstowy:
 
 ```text
-\hat{y}_i = f_\theta(x_i)
-```
-
-Ogólna postać empirycznego ryzyka, czyli średniej straty na danych treningowych:
-
-```text
-J(\theta) = (1 / N) * sum_{i=1}^{N} L(y_i, f_\theta(x_i))
+J(theta) = (1 / N) * suma_i L(y_i, f_theta(x_i))
 ```
 
 Uczenie modelu polega na znalezieniu takich parametrów `theta`, które minimalizują `J(theta)`.
@@ -44,8 +44,12 @@ Uczenie modelu polega na znalezieniu takich parametrów `theta`, które minimali
 
 Gradient wskazuje kierunek najszybszego wzrostu funkcji. Jeśli chcemy minimalizować funkcję kosztu, aktualizujemy parametry w kierunku przeciwnym do gradientu:
 
-```text
-\theta_{t+1} = \theta_t - \eta * \nabla_\theta J(\theta_t)
+```mermaid
+flowchart LR
+    A["Aktualne parametry<br/>theta_t"] --> B["Policz koszt<br/>J(theta_t)"]
+    B --> C["Policz gradient<br/>grad = nabla J(theta_t)"]
+    C --> D["Zrób krok w dół<br/>theta_{t+1} = theta_t - eta * grad"]
+    D --> E["Nowe parametry<br/>theta_{t+1}"]
 ```
 
 Interpretacja:
@@ -63,22 +67,20 @@ Jeżeli `eta` jest zbyt duże, optymalizacja może przeskakiwać minimum albo si
 
 ### 3.1. Mean Squared Error - MSE
 
-Wzór dla jednej próbki:
+Wzór w formie kroków:
 
-```text
-L(y, \hat{y}) = (y - \hat{y})^2
+```mermaid
+flowchart LR
+    A["Prawdziwa wartość<br/>y"] --> C["Błąd<br/>e = y - y_hat"]
+    B["Predykcja modelu<br/>y_hat"] --> C
+    C --> D["Podnieś błąd do kwadratu<br/>L = e^2"]
+    D --> E["Dla całego zbioru<br/>MSE = średnia z e_i^2"]
 ```
 
-Wzór dla całego zbioru:
+Pochodna po predykcji, w krótkim zapisie:
 
 ```text
-J(\theta) = (1 / N) * sum_{i=1}^{N} (y_i - \hat{y}_i)^2
-```
-
-Pochodna po predykcji:
-
-```text
-dL / d\hat{y} = 2 * (\hat{y} - y)
+dL / d y_hat = 2 * (y_hat - y)
 ```
 
 Co to oznacza:
@@ -95,10 +97,14 @@ criterion = torch.nn.MSELoss()
 
 ### 3.2. Mean Absolute Error - MAE
 
-Wzór:
+Wzór w formie kroków:
 
-```text
-J(\theta) = (1 / N) * sum_{i=1}^{N} |y_i - \hat{y}_i|
+```mermaid
+flowchart LR
+    A["Prawdziwa wartość<br/>y"] --> C["Błąd<br/>e = y - y_hat"]
+    B["Predykcja modelu<br/>y_hat"] --> C
+    C --> D["Weź wartość bezwzględną<br/>L = abs(e)"]
+    D --> E["Dla całego zbioru<br/>MAE = średnia z abs(e_i)"]
 ```
 
 Co to oznacza:
@@ -117,18 +123,15 @@ criterion = torch.nn.L1Loss()
 
 Huber loss łączy MSE dla małych błędów i MAE dla dużych błędów.
 
-Dla błędu:
+Działanie w formie decyzji:
 
-```text
-a = y - \hat{y}
-```
-
-funkcja ma postać:
-
-```text
-L_\delta(a) =
-    0.5 * a^2                 gdy |a| <= delta
-    delta * (|a| - 0.5*delta) gdy |a| > delta
+```mermaid
+flowchart TD
+    A["Błąd<br/>a = y - y_hat"] --> B{"Czy abs(a) <= delta?"}
+    B -- "tak, mały błąd" --> C["Część kwadratowa<br/>L = 0.5 * a^2"]
+    B -- "nie, duży błąd" --> D["Część liniowa<br/>L = delta * (abs(a) - 0.5 * delta)"]
+    C --> E["Huber loss"]
+    D --> E
 ```
 
 Interpretacja:
@@ -151,8 +154,11 @@ criterion = torch.nn.HuberLoss(delta=1.0)
 
 W klasyfikacji binarnej model często zwraca logit `z`, czyli surowy wynik przed aktywacją. Sigmoid zamienia logit na prawdopodobieństwo:
 
-```text
-p = sigmoid(z) = 1 / (1 + exp(-z))
+```mermaid
+flowchart LR
+    A["Logit z<br/>surowy wynik modelu"] --> B["Sigmoid<br/>p = 1 / (1 + exp(-z))"]
+    B --> C["Prawdopodobieństwo<br/>p = P(y = 1 | x)"]
+    B --> D["Druga klasa<br/>1 - p = P(y = 0 | x)"]
 ```
 
 gdzie:
@@ -163,6 +169,18 @@ gdzie:
 ### 4.2. Binary cross-entropy - BCE
 
 Dla etykiety `y` należącej do `{0, 1}` i predykcji `p`:
+
+```mermaid
+flowchart TD
+    A["Etykieta y<br/>0 albo 1"] --> B{"Jaka jest prawdziwa klasa?"}
+    C["Predykcja p<br/>P(y = 1 | x)"] --> B
+    B -- "y = 1" --> D["Kara<br/>L = -log(p)"]
+    B -- "y = 0" --> E["Kara<br/>L = -log(1 - p)"]
+    D --> F["BCE<br/>średnia kara po batchu"]
+    E --> F
+```
+
+Pełny zapis tekstowy:
 
 ```text
 L(y, p) = -[y * log(p) + (1 - y) * log(1 - p)]
@@ -222,14 +240,12 @@ criterion = torch.nn.BCEWithLogitsLoss(pos_weight=torch.tensor([w]))
 
 Model dla `K` klas zwraca wektor logitów:
 
-```text
-z = [z_1, z_2, ..., z_K]
-```
-
-Softmax zamienia logity na prawdopodobieństwa:
-
-```text
-p_k = exp(z_k) / sum_{j=1}^{K} exp(z_j)
+```mermaid
+flowchart LR
+    A["Logity modelu<br/>z = [z_1, z_2, ..., z_K]"] --> B["Exponenty<br/>exp(z_1), ..., exp(z_K)"]
+    B --> C["Suma exponentów<br/>S = suma_j exp(z_j)"]
+    C --> D["Prawdopodobieństwo klasy k<br/>p_k = exp(z_k) / S"]
+    D --> E["Wszystkie p_k są dodatnie<br/>i sumują się do 1"]
 ```
 
 Właściwości:
@@ -242,13 +258,17 @@ Właściwości:
 
 Jeżeli prawdziwa klasa ma indeks `c`, strata wynosi:
 
-```text
-L = -log(p_c)
+```mermaid
+flowchart LR
+    A["Prawdziwa klasa<br/>c"] --> C["Wybierz prawdopodobieństwo<br/>p_c"]
+    B["Softmax modelu<br/>p_1 ... p_K"] --> C
+    C --> D["Kara za poprawną klasę<br/>L = -log(p_c)"]
+    D --> E["Jeśli p_c małe,<br/>kara jest duża"]
 ```
 
 czyli model jest karany za niskie prawdopodobieństwo przypisane poprawnej klasie.
 
-Dla etykiety one-hot `y`:
+Dla etykiety one-hot `y`, precyzyjny zapis tekstowy:
 
 ```text
 L(y, p) = - sum_{k=1}^{K} y_k * log(p_k)
@@ -297,8 +317,15 @@ Większa waga klasy oznacza większą karę za błędy na tej klasie.
 
 Dla klasyfikacji binarnej w SVM często zapisuje się etykiety jako `y` należące do `{-1, 1}`. Dla wyniku modelu `f(x)` hinge loss ma postać:
 
-```text
-L(y, f(x)) = max(0, 1 - y * f(x))
+```mermaid
+flowchart TD
+    A["Etykieta<br/>y w {-1, 1}"] --> C["Margines<br/>m = y * f(x)"]
+    B["Wynik modelu<br/>f(x)"] --> C
+    C --> D{"Czy m >= 1?"}
+    D -- "tak" --> E["Poprawnie i z marginesem<br/>L = 0"]
+    D -- "nie" --> F["Za blisko albo błąd<br/>L = 1 - m"]
+    E --> G["Hinge loss<br/>max(0, 1 - y * f(x))"]
+    F --> G
 ```
 
 Interpretacja:
@@ -308,8 +335,11 @@ Interpretacja:
 
 W SVM minimalizuje się zwykle:
 
-```text
-J(w) = (1/2) * ||w||^2 + C * sum_i max(0, 1 - y_i * f(x_i))
+```mermaid
+flowchart LR
+    A["Regularyzacja<br/>(1/2) * ||w||^2"] --> C["Koszt SVM<br/>J(w)"]
+    B["Kara za błędy<br/>C * suma hinge loss"] --> C
+    C --> D["C kontroluje kompromis<br/>margines vs błędy"]
 ```
 
 gdzie:
@@ -324,8 +354,11 @@ gdzie:
 
 Regularyzacja zmienia funkcję minimalizowaną przez model:
 
-```text
-J_total(\theta) = J_data(\theta) + lambda * R(\theta)
+```mermaid
+flowchart LR
+    A["Strata na danych<br/>J_data(theta)"] --> C["Całkowity koszt<br/>J_total(theta)"]
+    B["Kara za złożoność<br/>lambda * R(theta)"] --> C
+    C --> D["Model ma dobrze przewidywać<br/>i nie mieć zbyt dużych wag"]
 ```
 
 gdzie:
@@ -336,8 +369,11 @@ gdzie:
 
 ### 7.1. L2
 
-```text
-R(\theta) = sum_j theta_j^2
+```mermaid
+flowchart LR
+    A["Wagi modelu<br/>theta_j"] --> B["Podnieś każdą wagę do kwadratu<br/>theta_j^2"]
+    B --> C["Zsumuj<br/>R(theta) = suma theta_j^2"]
+    C --> D["Efekt<br/>zmniejszanie dużych wag"]
 ```
 
 Efekt:
@@ -350,8 +386,11 @@ W optymalizatorach PyTorch parametr `weight_decay` zwykle odpowiada regularyzacj
 
 ### 7.2. L1
 
-```text
-R(\theta) = sum_j |theta_j|
+```mermaid
+flowchart LR
+    A["Wagi modelu<br/>theta_j"] --> B["Weź wartość bezwzględną<br/>abs(theta_j)"]
+    B --> C["Zsumuj<br/>R(theta) = suma abs(theta_j)"]
+    C --> D["Efekt<br/>część wag może spaść do zera"]
 ```
 
 Efekt:
@@ -368,8 +407,11 @@ Efekt:
 
 Gradient liczony jest na całym zbiorze:
 
-```text
-\theta_{t+1} = \theta_t - \eta * (1/N) * sum_{i=1}^{N} \nabla_\theta L_i(\theta_t)
+```mermaid
+flowchart LR
+    A["Cały zbiór treningowy<br/>N próbek"] --> B["Policz gradient każdej próbki<br/>grad L_i"]
+    B --> C["Uśrednij gradienty<br/>grad = (1/N) * suma grad L_i"]
+    C --> D["Aktualizacja<br/>theta_next = theta - lr * grad"]
 ```
 
 Zalety:
@@ -386,8 +428,11 @@ Wady:
 
 Gradient liczony jest dla jednej próbki:
 
-```text
-\theta_{t+1} = \theta_t - \eta * \nabla_\theta L_i(\theta_t)
+```mermaid
+flowchart LR
+    A["Jedna losowa próbka<br/>(x_i, y_i)"] --> B["Policz stratę<br/>L_i"]
+    B --> C["Policz gradient<br/>grad L_i"]
+    C --> D["Aktualizacja<br/>theta_next = theta - lr * grad L_i"]
 ```
 
 Zalety:
@@ -404,8 +449,11 @@ Wady:
 
 Gradient liczony jest dla paczki `B` próbek:
 
-```text
-\theta_{t+1} = \theta_t - \eta * (1/|B|) * sum_{i in B} \nabla_\theta L_i(\theta_t)
+```mermaid
+flowchart LR
+    A["Mini-batch B<br/>np. 32 albo 64 próbki"] --> B["Policz straty<br/>L_i dla próbek z batcha"]
+    B --> C["Uśrednij gradienty<br/>grad = (1/|B|) * suma grad L_i"]
+    C --> D["Aktualizacja<br/>theta_next = theta - lr * grad"]
 ```
 
 To najczęstszy wariant w uczeniu głębokim.
@@ -423,11 +471,13 @@ Typowe hiperparametry:
 
 Momentum dodaje pamięć poprzednich aktualizacji. Zamiast poruszać się wyłącznie według aktualnego gradientu, model używa prędkości `v`.
 
-Wzory:
+Wzór w formie kroków:
 
-```text
-v_t = beta * v_{t-1} + (1 - beta) * \nabla_\theta J(\theta_t)
-\theta_{t+1} = \theta_t - \eta * v_t
+```mermaid
+flowchart LR
+    A["Poprzednia prędkość<br/>v_prev"] --> C["Nowa prędkość<br/>v = beta * v_prev + (1 - beta) * grad"]
+    B["Aktualny gradient<br/>grad"] --> C
+    C --> D["Aktualizacja parametrów<br/>theta_next = theta - lr * v"]
 ```
 
 Intuicja:
@@ -452,13 +502,14 @@ optimizer = torch.optim.SGD(model.parameters(), lr=0.01, momentum=0.9)
 
 Nesterov momentum liczy gradient po "spojrzeniu do przodu", czyli w miejscu, do którego prowadzi aktualna prędkość.
 
-Intuicyjny zapis:
+Intuicyjny zapis jako diagram:
 
-```text
-lookahead = \theta_t - \eta * beta * v_{t-1}
-gradient = \nabla_\theta J(lookahead)
-v_t = beta * v_{t-1} + gradient
-\theta_{t+1} = \theta_t - \eta * v_t
+```mermaid
+flowchart LR
+    A["Aktualne theta"] --> B["Spójrz do przodu<br/>lookahead = theta - lr * beta * v_prev"]
+    B --> C["Policz gradient<br/>grad w punkcie lookahead"]
+    C --> D["Zaktualizuj prędkość<br/>v = beta * v_prev + grad"]
+    D --> E["Zaktualizuj theta<br/>theta_next = theta - lr * v"]
 ```
 
 Intuicja:
@@ -483,12 +534,13 @@ optimizer = torch.optim.SGD(
 
 Adagrad dostosowuje learning rate osobno dla każdego parametru. Parametry, które często dostają duże gradienty, mają efektywnie mniejszy krok.
 
-Wzory uproszczone:
+Wzory uproszczone jako diagram:
 
-```text
-g_t = \nabla_\theta J(\theta_t)
-r_t = r_{t-1} + g_t^2
-\theta_{t+1} = \theta_t - \eta * g_t / (sqrt(r_t) + epsilon)
+```mermaid
+flowchart LR
+    A["Gradient<br/>g = grad J(theta)"] --> B["Akumulator<br/>r = r_prev + g^2"]
+    B --> C["Skalowany krok<br/>step = lr * g / (sqrt(r) + eps)"]
+    C --> D["Aktualizacja<br/>theta_next = theta - step"]
 ```
 
 gdzie operacje są wykonywane element po elemencie.
@@ -509,12 +561,13 @@ Wady:
 
 RMSProp rozwiązuje problem stale rosnącej sumy z Adagrad, używając wykładniczej średniej kwadratów gradientów.
 
-Wzory:
+Wzory jako diagram:
 
-```text
-g_t = \nabla_\theta J(\theta_t)
-r_t = beta * r_{t-1} + (1 - beta) * g_t^2
-\theta_{t+1} = \theta_t - \eta * g_t / (sqrt(r_t) + epsilon)
+```mermaid
+flowchart LR
+    A["Gradient<br/>g = grad J(theta)"] --> B["Średnia kwadratów gradientu<br/>r = beta * r_prev + (1 - beta) * g^2"]
+    B --> C["Skalowany krok<br/>step = lr * g / (sqrt(r) + eps)"]
+    C --> D["Aktualizacja<br/>theta_next = theta - step"]
 ```
 
 Interpretacja:
@@ -544,27 +597,20 @@ Adam łączy idee momentum i RMSProp. Utrzymuje:
 - średnią ruchomą gradientów,
 - średnią ruchomą kwadratów gradientów.
 
-Wzory:
+Wzory jako diagram:
 
-```text
-g_t = \nabla_\theta J(\theta_t)
-
-m_t = beta_1 * m_{t-1} + (1 - beta_1) * g_t
-v_t = beta_2 * v_{t-1} + (1 - beta_2) * g_t^2
+```mermaid
+flowchart LR
+    A["Gradient<br/>g = grad J(theta)"] --> B["Momentum gradientu<br/>m = beta1 * m_prev + (1 - beta1) * g"]
+    A --> C["Skala gradientu<br/>v = beta2 * v_prev + (1 - beta2) * g^2"]
+    B --> D["Korekcja startu<br/>m_hat = m / (1 - beta1^t)"]
+    C --> E["Korekcja startu<br/>v_hat = v / (1 - beta2^t)"]
+    D --> F["Krok Adama<br/>step = lr * m_hat / (sqrt(v_hat) + eps)"]
+    E --> F
+    F --> G["Aktualizacja<br/>theta_next = theta - step"]
 ```
 
-Ponieważ na początku `m_0 = 0` i `v_0 = 0`, stosuje się korekcję obciążenia:
-
-```text
-\hat{m}_t = m_t / (1 - beta_1^t)
-\hat{v}_t = v_t / (1 - beta_2^t)
-```
-
-Aktualizacja:
-
-```text
-\theta_{t+1} = \theta_t - \eta * \hat{m}_t / (sqrt(\hat{v}_t) + epsilon)
-```
+Ponieważ na początku `m_0 = 0` i `v_0 = 0`, stosuje się korekcję obciążenia (`m_hat`, `v_hat`), żeby pierwsze kroki nie były sztucznie zaniżone.
 
 Intuicja:
 
@@ -593,8 +639,11 @@ AdamW to wariant Adama z odsprzężonym weight decay. W klasycznym Adamie regula
 
 AdamW wykonuje weight decay bardziej bezpośrednio:
 
-```text
-\theta <- \theta - \eta * weight_decay * \theta
+```mermaid
+flowchart LR
+    A["Aktualne parametry<br/>theta"] --> B["Odsprzężony weight decay<br/>theta = theta - lr * weight_decay * theta"]
+    B --> C["Krok Adama<br/>adaptacyjna aktualizacja z gradientu"]
+    C --> D["Nowe parametry<br/>theta_next"]
 ```
 
 oraz osobno wykonuje adaptacyjną aktualizację Adama.
